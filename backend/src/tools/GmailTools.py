@@ -164,8 +164,13 @@ class GmailToolsClass:
             else:
                 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
                 creds = flow.run_local_server(port=0)
-            with open('token.json', 'w') as token:
-                token.write(creds.to_json())
+            try:
+                with open('token.json', 'w') as token:
+                    token.write(creds.to_json())
+            except OSError:
+                # token.json may be a read-only mounted secret file (e.g. Render Secret Files);
+                # the refreshed credentials still work in-memory for this run.
+                pass
         
         return build('gmail', 'v1', credentials=creds)
     
