@@ -156,8 +156,9 @@ class GmailToolsClass:
         
     def _get_gmail_service(self):
         creds = None
-        if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        token_path = 'token.json' if os.path.exists('token.json') else '/etc/secrets/token.json'
+        if os.path.exists(token_path):
+            creds = Credentials.from_authorized_user_file(token_path, SCOPES)
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
